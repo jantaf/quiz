@@ -43,6 +43,19 @@ app.use(function(req, res, next) {
 
 app.use('/', routes);
 
+//auto-logout
+app.use(function(req, res, next) {
+    var fActual = new Date().getTime();
+    if(req.session.user && req.session.conexion < fActual-120000){
+        delete req.session.user;
+        res.redirect("/");
+    }
+    else{
+        req.session.conexion = new Date().getTime();
+        next();  
+    }
+    
+});
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
     var err = new Error('Not Found');
